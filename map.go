@@ -178,7 +178,7 @@ func (m *Map) remove(i int) {
 	}
 }
 
-// Range iterates overall all key/values.
+// Range iterates over all key/values.
 // It's not safe to call or Set or Delete while ranging.
 func (m *Map) Range(iter func(key string, value interface{}) bool) {
 	for i := 0; i < len(m.buckets); i++ {
@@ -188,4 +188,18 @@ func (m *Map) Range(iter func(key string, value interface{}) bool) {
 			}
 		}
 	}
+}
+
+// GetPos gets a single keys/value nearby a position
+// The pos param can be any valid uint64. Useful for grabbing a random item
+// from the map.
+// It's not safe to call or Set or Delete while ranging.
+func (m *Map) GetPos(pos uint64) (key string, value interface{}, ok bool) {
+	for i := 0; i < len(m.buckets); i++ {
+		index := (pos + uint64(i)) & uint64(m.mask)
+		if m.buckets[index].dib() > 0 {
+			return m.buckets[index].key, m.buckets[index].value, true
+		}
+	}
+	return "", nil, false
 }
