@@ -12,8 +12,6 @@ import (
 	"strconv"
 	"testing"
 	"time"
-
-	"github.com/tidwall/lotsa"
 )
 
 type keyT = string
@@ -198,8 +196,8 @@ func TestBench(t *testing.T) {
 		pnums = append(pnums, valueT(&nums[i]))
 	}
 	fmt.Printf("\n## STRING KEYS\n\n")
-	t.Run("RobinHood", func(t *testing.T) {
-		testPerf(nums, pnums, "robinhood")
+	t.Run("Tidwall", func(t *testing.T) {
+		testPerf(nums, pnums, "tidwall")
 	})
 	t.Run("Stdlib", func(t *testing.T) {
 		testPerf(nums, pnums, "stdlib")
@@ -242,7 +240,7 @@ func testPerf(nums []keyT, pnums []valueT, which keyT) {
 			for range m {
 			}
 		}
-	case "robinhood":
+	case "tidwall":
 		m := New(initSize)
 		setop = func(i, _ int) { m.Set(nums[i], pnums[i]) }
 		getop = func(i, _ int) { m.Get(nums[i]) }
@@ -269,12 +267,15 @@ func testPerf(nums []keyT, pnums []valueT, which keyT) {
 				na = true
 			} else {
 				n = 20
-				lotsa.Ops(n, 1, func(_, _ int) { op() })
+				for i := 0; i < n; i++ {
+					op()
+				}
 			}
-
 		} else {
 			n = len(nums)
-			lotsa.Ops(n, 1, ops[i])
+			for j := 0; j < n; j++ {
+				ops[i](j, 1)
+			}
 		}
 		dur := time.Since(start)
 		if i == 0 {
