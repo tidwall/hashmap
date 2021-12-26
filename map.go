@@ -2,11 +2,9 @@
 // Use of this source code is governed by an ISC-style
 // license that can be found in the LICENSE file.
 
-package hashmap
+package rhh
 
-import (
-	"github.com/cespare/xxhash/v2"
-)
+import "github.com/cespare/xxhash/v2"
 
 const (
 	loadFactor  = 0.85                      // must be above 50%

@@ -1,6 +1,6 @@
-# hashmap
+# rhh
 
-[![GoDoc](https://img.shields.io/badge/api-reference-blue.svg?style=flat-square)](https://godoc.org/github.com/tidwall/hashmap)
+[![GoDoc](https://img.shields.io/badge/api-reference-blue.svg?style=flat-square)](https://godoc.org/github.com/tidwall/rhh)
 
 A simple and efficient hashmap package for Go using the
 [`xxhash`](http://www.xxhash.com) algorithm,
@@ -13,10 +13,10 @@ This is an alternative to the standard [Go map](https://golang.org/ref/spec#Map_
 
 ## Installing
 
-To start using `hashmap`, install Go and run `go get`:
+To start using `rhh`, install Go and run `go get`:
 
 ```sh
-$ go get -u github.com/tidwall/hashmap
+$ go get github.com/tidwall/rhh
 ```
 
 This will retrieve the library.
@@ -27,7 +27,7 @@ The `Map` type works similar to a standard Go map, and includes four methods:
 `Set`, `Get`, `Delete`, `Len`.
 
 ```go
-var m hashmap.Map
+var m rhh.Map
 m.Set("Hello", "Dolly!")
 val, _ := m.Get("Hello")
 fmt.Printf("%v\n", val)
