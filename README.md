@@ -4,6 +4,8 @@
 
 An efficient hashmap implementation in Go.
 
+This is a rewrite of the [tidwall/rhh](https://github.com/tidwall/rhh) package to include Go 1.18 features.
+
 ## Features
 
 - Support for [Generics](#generics) (Go 1.18+).
