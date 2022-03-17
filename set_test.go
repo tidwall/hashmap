@@ -1,4 +1,4 @@
-package rhh
+package hashmap
 
 import (
 	"math/rand"

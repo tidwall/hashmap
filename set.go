@@ -1,4 +1,4 @@
-package rhh
+package hashmap
 
 type Set[K comparable] struct {
 	base Map[K, struct{}]
