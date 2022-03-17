@@ -64,19 +64,60 @@ func init() {
 	rand.Seed(seed)
 }
 
+type imap struct {
+	m *Map[string, interface{}]
+}
+
+func newimap(cap int) *imap {
+	m := new(imap)
+	m.m = New[string, interface{}](cap)
+	return m
+}
+
+func (m *imap) Get(key string) (interface{}, bool) {
+	if m.m == nil {
+		return nil, false
+	}
+	return m.m.Get(key)
+}
+func (m *imap) Set(key string, value interface{}) (interface{}, bool) {
+	if m.m == nil {
+		m.m = new(Map[string, interface{}])
+	}
+	return m.m.Set(key, value)
+}
+func (m *imap) Delete(key string) (interface{}, bool) {
+	if m.m == nil {
+		return nil, false
+	}
+	return m.m.Delete(key)
+}
+func (m *imap) Len() int {
+	if m.m == nil {
+		return 0
+	}
+	return m.m.Len()
+}
+func (m *imap) Scan(iter func(key string, value interface{}) bool) {
+	if m.m == nil {
+		return
+	}
+	m.m.Scan(iter)
+}
+
 func TestRandomData(t *testing.T) {
 	N := 10000
 	start := time.Now()
 	for time.Since(start) < time.Second*2 {
 		nums := random(N, true)
-		var m *Map
+		var m *imap
 		switch rand.Int() % 5 {
 		default:
-			m = New(N / ((rand.Int() % 3) + 1))
+			m = newimap(N / ((rand.Int() % 3) + 1))
 		case 1:
-			m = new(Map)
+			m = new(imap)
 		case 2:
-			m = New(0)
+			m = newimap(0)
 		}
 		v, ok := m.Get(k(999))
 		if ok || v != nil {
@@ -161,14 +202,14 @@ func TestRandomData(t *testing.T) {
 		if m.Len() != N/2 {
 			t.Fatalf("expected %v, got %v", N/2, m.Len())
 		}
-		m.Range(func(key keyT, value valueT) bool {
+		m.Scan(func(key keyT, value valueT) bool {
 			if value != add(key, 1) {
 				t.Fatalf("expected %v, got %v", add(key, 1), value)
 			}
 			return true
 		})
 		var n int
-		m.Range(func(key keyT, value valueT) bool {
+		m.Scan(func(key keyT, value valueT) bool {
 			n++
 			return false
 		})
@@ -241,12 +282,12 @@ func testPerf(nums []keyT, pnums []valueT, which keyT) {
 			}
 		}
 	case "tidwall":
-		m := New(initSize)
+		m := newimap(initSize)
 		setop = func(i, _ int) { m.Set(nums[i], pnums[i]) }
 		getop = func(i, _ int) { m.Get(nums[i]) }
 		delop = func(i, _ int) { m.Delete(nums[i]) }
 		scnop = func() {
-			m.Range(func(key keyT, value valueT) bool {
+			m.Scan(func(key keyT, value valueT) bool {
 				return true
 			})
 		}
@@ -313,7 +354,7 @@ func commaize(n int) string {
 }
 
 func TestHashDIB(t *testing.T) {
-	var e entry
+	var e entry[string, interface{}]
 	e.setDIB(100)
 	e.setHash(90000)
 	if e.dib() != 100 {
@@ -321,5 +362,44 @@ func TestHashDIB(t *testing.T) {
 	}
 	if e.hash() != 90000 {
 		t.Fatalf("expected %v, got %v", 90000, e.hash())
+	}
+}
+
+func TestIntInt(t *testing.T) {
+	var m Map[int, int]
+
+	keys := rand.Perm(1000000)
+
+	for i := 0; i < len(keys); i++ {
+		_, ok := m.Set(keys[i], keys[i]*10)
+		if ok {
+			t.Fatalf("expected false")
+		}
+		if m.Len() != i+1 {
+			t.Fatalf("expected %d got %d", i+1, m.Len())
+		}
+	}
+
+	for i := 0; i < len(keys); i++ {
+		v, ok := m.Get(keys[i])
+		if !ok {
+			t.Fatalf("expected true")
+		}
+		if v != keys[i]*10 {
+			t.Fatalf("expected %d got %d", keys[i]*10, v)
+		}
+	}
+
+	for i := 0; i < len(keys); i++ {
+		v, ok := m.Delete(keys[i])
+		if !ok {
+			t.Fatalf("expected true")
+		}
+		if v != keys[i]*10 {
+			t.Fatalf("expected %d got %d", keys[i]*10, v)
+		}
+		if m.Len() != len(keys)-i-1 {
+			t.Fatalf("expected %d got %d", len(keys)-i-1, m.Len())
+		}
 	}
 }
