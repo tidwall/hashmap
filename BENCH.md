@@ -1,6 +1,9 @@
 ## Performance
 
-A very rough comparison of this implementation and the built-in Go map.
+While this implementation was designed with performance in mind, it's not 
+necessarily better, faster, smarter, or sexier that the built-in Go hashmap. 
+
+Here's a very rough comparison.
 
 The following benchmarks were run on my 2019 Macbook Pro (2.4 GHz 8-Core Intel Core i9) using Go version 1.18. The key types are either strings or ints and the values are always ints.
 
