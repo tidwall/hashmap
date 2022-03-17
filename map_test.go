@@ -50,7 +50,7 @@ func random(N int, perm bool) []keyT {
 	return nums
 }
 
-func shuffle(nums []keyT) {
+func shuffle[K comparable](nums []K) {
 	for i := range nums {
 		j := rand.Intn(i + 1)
 		nums[i], nums[j] = nums[j], nums[i]
@@ -231,18 +231,33 @@ func TestBench(t *testing.T) {
 		fmt.Printf("Enable benchmarks with MAPBENCH=1000000\n")
 		return
 	}
-	nums := random(int(N), false)
-	var pnums []valueT
-	for i := range nums {
-		pnums = append(pnums, valueT(&nums[i]))
+
+	var pnums []int
+	for i := 0; i < int(N); i++ {
+		pnums = append(pnums, i)
 	}
-	fmt.Printf("\n## STRING KEYS\n\n")
-	t.Run("Tidwall", func(t *testing.T) {
-		testPerf(nums, pnums, "tidwall")
-	})
-	t.Run("Stdlib", func(t *testing.T) {
-		testPerf(nums, pnums, "stdlib")
-	})
+
+	{
+		fmt.Printf("\n## STRING KEYS\n\n")
+		nums := random(int(N), false)
+		t.Run("Tidwall", func(t *testing.T) {
+			testPerf(nums, pnums, "tidwall")
+		})
+		t.Run("Stdlib", func(t *testing.T) {
+			testPerf(nums, pnums, "stdlib")
+		})
+	}
+	{
+		fmt.Printf("\n## INT KEYS\n\n")
+		nums := rand.Perm(int(N))
+		t.Run("Tidwall", func(t *testing.T) {
+			testPerf(nums, pnums, "tidwall")
+		})
+		t.Run("Stdlib", func(t *testing.T) {
+			testPerf(nums, pnums, "stdlib")
+		})
+	}
+
 }
 
 func printItem(s string, size int, dir int) {
@@ -256,7 +271,7 @@ func printItem(s string, size int, dir int) {
 	fmt.Printf("%s ", s)
 }
 
-func testPerf(nums []keyT, pnums []valueT, which keyT) {
+func testPerf[K comparable, V any](nums []K, pnums []V, which string) {
 	var ms1, ms2 runtime.MemStats
 	initSize := 0 //len(nums) * 2
 	defer func() {
@@ -273,7 +288,7 @@ func testPerf(nums []keyT, pnums []valueT, which keyT) {
 	var scnop func()
 	switch which {
 	case "stdlib":
-		m := make(map[keyT]valueT, initSize)
+		m := make(map[K]V, initSize)
 		setop = func(i, _ int) { m[nums[i]] = pnums[i] }
 		getop = func(i, _ int) { _ = m[nums[i]] }
 		delop = func(i, _ int) { delete(m, nums[i]) }
@@ -282,12 +297,12 @@ func testPerf(nums []keyT, pnums []valueT, which keyT) {
 			}
 		}
 	case "tidwall":
-		m := newimap(initSize)
+		var m Map[K, V]
 		setop = func(i, _ int) { m.Set(nums[i], pnums[i]) }
 		getop = func(i, _ int) { m.Get(nums[i]) }
 		delop = func(i, _ int) { m.Delete(nums[i]) }
 		scnop = func() {
-			m.Scan(func(key keyT, value valueT) bool {
+			m.Scan(func(key K, value V) bool {
 				return true
 			})
 		}
@@ -296,7 +311,7 @@ func testPerf(nums []keyT, pnums []valueT, which keyT) {
 	fmt.Printf("\n")
 
 	ops := []func(int, int){setop, getop, setop, nil, delop}
-	tags := []keyT{"set", "get", "reset", "scan", "delete"}
+	tags := []string{"set", "get", "reset", "scan", "delete"}
 	for i := range ops {
 		shuffle(nums)
 		var na bool
