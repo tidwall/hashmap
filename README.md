@@ -78,9 +78,6 @@ fmt.Printf("%v\n", m.Contains("Andy"))
 
 ## Performance
 
-While this implementation was designed with performance in mind, it's not 
-necessarily better, faster, smarter, or sexier that the built-in Go hashmap. 
-
 See [BENCH.md](BENCH.md) for more info.
 
 ## Contact
