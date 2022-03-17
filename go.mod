@@ -1,4 +1,4 @@
-module github.com/tidwall/rhh
+module github.com/tidwall/hashmap
 
 go 1.18
 
