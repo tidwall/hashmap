@@ -8,9 +8,9 @@ An efficient hashmap implementation in Go.
 
 - Support for [Generics](#generics) (Go 1.18+).
 - `Map` and `Set` types for unordered key-value maps and sets,
-- [`xxhash`](http://www.xxhash.com) algorithm
-- [Open addressing](https://en.wikipedia.org/wiki/Hash_table#Open_addressing), and
-- [Robin hood hashing](https://en.wikipedia.org/wiki/Hash_table#Robin_Hood_hashing).
+- [xxhash algorithm](http://www.xxhash.com)
+- [Open addressing](https://en.wikipedia.org/wiki/Hash_table#Open_addressing)
+- [Robin hood hashing](https://en.wikipedia.org/wiki/Hash_table#Robin_Hood_hashing)
 
 ## Using
 
