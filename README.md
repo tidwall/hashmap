@@ -1,33 +1,44 @@
-# rhh
+# hashmap
 
-[![GoDoc](https://img.shields.io/badge/api-reference-blue.svg?style=flat-square)](https://godoc.org/github.com/tidwall/rhh)
+[![GoDoc](https://img.shields.io/badge/api-reference-blue.svg?style=flat-square)](https://godoc.org/github.com/tidwall/hashmap)
 
-A simple and efficient hashmap package for Go using the
-[`xxhash`](http://www.xxhash.com) algorithm,
-[open addressing](https://en.wikipedia.org/wiki/Hash_table#Open_addressing), and
-[robin hood hashing](https://en.wikipedia.org/wiki/Hash_table#Robin_Hood_hashing).
+An efficient hashmap implementation in Go.
 
-This is an alternative to the standard [Go map](https://golang.org/ref/spec#Map_types).
+## Features
+
+- Support for [Generics](#generics) (Go 1.18+).
+- `Map` and `Set` types for unordered key-value maps and sets,
+- [`xxhash`](http://www.xxhash.com) algorithm
+- [Open addressing](https://en.wikipedia.org/wiki/Hash_table#Open_addressing), and
+- [Robin hood hashing](https://en.wikipedia.org/wiki/Hash_table#Robin_Hood_hashing).
+
+## Using
+
+To start using this package, install Go and run:
+
+```sh
+$ go get github.com/tidwall/hashmap
+```
 
 # Getting Started
 
 ## Installing
 
-To start using `rhh`, install Go and run `go get`:
+To start using `hashmap`, install Go and run `go get`:
 
 ```sh
-$ go get github.com/tidwall/rhh
+$ go get github.com/tidwall/hashmap
 ```
 
 This will retrieve the library.
 
 ## Usage
 
-The `Map` type works similar to a standard Go map, and includes four methods:
-`Set`, `Get`, `Delete`, `Len`.
+The `Map` type works similar to a standard Go map, and includes the methods:
+`Set`, `Get`, `Delete`, `Len`, and `Scan`.
 
 ```go
-var m rhh.Map
+var m hashmap.Map[string, string]
 m.Set("Hello", "Dolly!")
 val, _ := m.Get("Hello")
 fmt.Printf("%v\n", val)
@@ -39,7 +50,26 @@ fmt.Printf("%v\n", val)
 // Output:
 // Dolly!
 // Dolly!
-// <nil>
+//
+```
+
+The `Set` type is like `Map` but only for keys.
+It includes the methods: `Insert`, `Contains`, `Delete`, `Len`, and `Scan`.
+
+```go
+var m hashmap.Set[string]
+m.Insert("Andy")
+m.Insert("Kate")
+m.Insert("Janet")
+
+fmt.Printf("%v\n", m.Contains("Kate"))
+fmt.Printf("%v\n", m.Contains("Bob"))
+fmt.Printf("%v\n", m.Contains("Andy"))
+
+// Output:
+// true
+// false
+// true
 ```
 
 ## Contact
