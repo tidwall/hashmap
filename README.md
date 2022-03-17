@@ -2,7 +2,7 @@
 
 [![GoDoc](https://img.shields.io/badge/api-reference-blue.svg?style=flat-square)](https://godoc.org/github.com/tidwall/hashmap)
 
-An efficient hashmap implementation in Go.
+An [efficient](BENCH.md) hashmap implementation in Go.
 
 This is a rewrite of the [tidwall/rhh](https://github.com/tidwall/rhh) package to include Go 1.18 features.
 
