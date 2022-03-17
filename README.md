@@ -12,6 +12,8 @@ An efficient hashmap implementation in Go.
 - [Open addressing](https://en.wikipedia.org/wiki/Hash_table#Open_addressing)
 - [Robin hood hashing](https://en.wikipedia.org/wiki/Hash_table#Robin_Hood_hashing)
 
+For ordered key-value data, check out the [tidwall/btree](https://github.com/tidwall/btree) package.
+
 ## Using
 
 To start using this package, install Go and run:
