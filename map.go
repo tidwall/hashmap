@@ -235,7 +235,7 @@ func (m *Map[K, V]) Keys() []K {
 
 // Values returns all values as a slice
 func (m *Map[K, V]) Values() []V {
-	var values []V
+	values := make([]V, 0, m.length)
 	m.Scan(func(key K, value V) bool {
 		values = append(values, value)
 		return true
