@@ -30,3 +30,8 @@ func (tr *Set[K]) Scan(iter func(key K) bool) {
 		return iter(key)
 	})
 }
+
+// Keys returns all keys as a slice
+func (tr *Set[K]) Keys() []K {
+	return tr.base.Keys()
+}

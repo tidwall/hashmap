@@ -39,7 +39,7 @@ This will retrieve the library.
 ## Usage
 
 The `Map` type works similar to a standard Go map, and includes the methods:
-`Set`, `Get`, `Delete`, `Len`, and `Scan`.
+`Set`, `Get`, `Delete`, `Len`, `Scan`, `Keys` and `Values`.
 
 ```go
 var m hashmap.Map[string, string]
@@ -58,7 +58,7 @@ fmt.Printf("%v\n", val)
 ```
 
 The `Set` type is like `Map` but only for keys.
-It includes the methods: `Insert`, `Contains`, `Delete`, `Len`, and `Scan`.
+It includes the methods: `Insert`, `Contains`, `Delete`, `Len`, `Scan` and `Keys`.
 
 ```go
 var m hashmap.Set[string]

@@ -222,3 +222,23 @@ func (m *Map[K, V]) Scan(iter func(key K, value V) bool) {
 		}
 	}
 }
+
+// Keys returns all keys as a slice
+func (m *Map[K, V]) Keys() []K {
+	var keys []K
+	m.Scan(func(key K, value V) bool {
+		keys = append(keys, key)
+		return true
+	})
+	return keys
+}
+
+// Values returns all values as a slice
+func (m *Map[K, V]) Values() []V {
+	var values []V
+	m.Scan(func(key K, value V) bool {
+		values = append(values, value)
+		return true
+	})
+	return values
+}

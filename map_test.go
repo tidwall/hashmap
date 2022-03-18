@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"reflect"
 	"runtime"
 	"strconv"
 	"testing"
@@ -416,5 +417,15 @@ func TestIntInt(t *testing.T) {
 		if m.Len() != len(keys)-i-1 {
 			t.Fatalf("expected %d got %d", len(keys)-i-1, m.Len())
 		}
+	}
+}
+
+func TestMapValues(t *testing.T) {
+	var m Map[int, int]
+	m.Set(1, 2)
+	expect := []int{2}
+	got := m.Values()
+	if !reflect.DeepEqual(got, expect) {
+		t.Fatal("expected Values equal")
 	}
 }
