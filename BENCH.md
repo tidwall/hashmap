@@ -1,7 +1,7 @@
 ## Performance
 
 While this implementation was designed with performance in mind, it's not 
-necessarily better, faster, smarter, or sexier that the built-in Go hashmap. 
+necessarily better, faster, smarter, or sexier than the built-in Go hashmap. 
 
 Here's a very rough comparison.
 
