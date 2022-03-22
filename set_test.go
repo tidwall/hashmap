@@ -2,6 +2,7 @@ package hashmap
 
 import (
 	"math/rand"
+	"reflect"
 	"testing"
 )
 
@@ -29,5 +30,15 @@ func TestSet(t *testing.T) {
 		if s.Len() != len(keys)-i-1 {
 			t.Fatalf("expected %d got %d", len(keys)-i-1, s.Len())
 		}
+	}
+}
+
+func TestSetKeys(t *testing.T) {
+	var s Set[string]
+	s.Insert("key")
+	expect := []string{"key"}
+	got := s.Keys()
+	if !reflect.DeepEqual(got, expect) {
+		t.Fatal("expected Keys equal")
 	}
 }
