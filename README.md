@@ -16,14 +16,6 @@ This is a rewrite of the [tidwall/rhh](https://github.com/tidwall/rhh) package t
 
 For ordered key-value data, check out the [tidwall/btree](https://github.com/tidwall/btree) package.
 
-## Using
-
-To start using this package, install Go and run:
-
-```sh
-$ go get github.com/tidwall/hashmap
-```
-
 # Getting Started
 
 ## Installing
