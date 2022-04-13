@@ -10,7 +10,9 @@ import (
 	"os"
 	"reflect"
 	"runtime"
+	"sort"
 	"strconv"
+	"sync"
 	"testing"
 	"time"
 )
@@ -427,5 +429,118 @@ func TestMapValues(t *testing.T) {
 	got := m.Values()
 	if !reflect.DeepEqual(got, expect) {
 		t.Fatal("expected Values equal")
+	}
+}
+
+func copyMapEntries(m *Map[int, int]) []entry[int, int] {
+	all := make([]entry[int, int], m.Len())
+	keys := m.Keys()
+	vals := m.Values()
+	for i := 0; i < len(keys); i++ {
+		all[i].key = keys[i]
+		all[i].value = vals[i]
+	}
+	sort.Slice(all, func(i, j int) bool {
+		return all[i].key < all[j].key
+	})
+	return all
+}
+
+func mapEntriesEqual(a, b []entry[int, int]) bool {
+	return reflect.DeepEqual(a, b)
+}
+
+func copyMapTest(N int, m1 *Map[int, int], e11 []entry[int, int], deep bool) {
+	e12 := copyMapEntries(m1)
+	if !mapEntriesEqual(e11, e12) {
+		panic("!")
+	}
+
+	// Make a copy and compare the values
+	m2 := m1.Copy()
+	e21 := copyMapEntries(m1)
+	if !mapEntriesEqual(e21, e12) {
+		panic("!")
+	}
+
+	// Delete every other key
+	var e22 []entry[int, int]
+	for i, j := range rand.Perm(N) {
+		if i&1 == 0 {
+			e22 = append(e22, e21[j])
+		} else {
+			prev, deleted := m2.Delete(e21[j].key)
+			if !deleted {
+				panic("!")
+			}
+			if prev != e21[j].value {
+
+				panic("!")
+			}
+		}
+	}
+	if m2.Len() != N/2 {
+		panic("!")
+	}
+	sort.Slice(e22, func(i, j int) bool {
+		return e22[i].key < e22[j].key
+	})
+	e23 := copyMapEntries(m2)
+	if !mapEntriesEqual(e23, e22) {
+		panic("!")
+	}
+	if !deep {
+		var wg sync.WaitGroup
+		wg.Add(2)
+		go func() {
+			defer wg.Done()
+			copyMapTest(N/2, m2, e23, true)
+		}()
+		go func() {
+			defer wg.Done()
+			copyMapTest(N/2, m2, e23, true)
+		}()
+		wg.Wait()
+	}
+	e24 := copyMapEntries(m2)
+	if !mapEntriesEqual(e24, e23) {
+		panic("!")
+	}
+}
+
+func TestMapCopy(t *testing.T) {
+	N := 1_000
+	// create the initial map
+	m1 := New[int, int](0)
+	for m1.Len() < N {
+		m1.Set(rand.Int(), rand.Int())
+	}
+	e11 := copyMapEntries(m1)
+	dur := time.Second * 2
+	var wg sync.WaitGroup
+	for i := 0; i < 16; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			start := time.Now()
+			for time.Since(start) < dur {
+				copyMapTest(N, m1, e11, false)
+			}
+		}()
+	}
+	wg.Wait()
+	e12 := copyMapEntries(m1)
+	if !mapEntriesEqual(e11, e12) {
+		panic("!")
+	}
+}
+
+func TestEmpty(t *testing.T) {
+	var m Map[int, int]
+	if _, ok := m.Get(0); ok {
+		t.Fatal()
+	}
+	if _, ok := m.Delete(0); ok {
+		t.Fatal()
 	}
 }

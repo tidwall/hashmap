@@ -35,3 +35,11 @@ func (tr *Set[K]) Scan(iter func(key K) bool) {
 func (tr *Set[K]) Keys() []K {
 	return tr.base.Keys()
 }
+
+// Copy the set. This is a copy-on-write operation and is very fast because
+// it only performs a shadow copy.
+func (tr *Set[K]) Copy() *Set[K] {
+	tr2 := new(Set[K])
+	tr2.base = *tr.base.Copy()
+	return tr2
+}

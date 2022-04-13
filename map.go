@@ -71,8 +71,13 @@ type Map[K comparable, V any] struct {
 	growAt   int
 	shrinkAt int
 	buckets  []entry[K, V]
-	kstr     bool
+	cow      [2]*cow
 	ksize    int
+	kstr     bool
+}
+
+type cow struct {
+	_ int // cannot be an empty struct
 }
 
 // New returns a new Map. Like map[string]interface{}
@@ -117,6 +122,7 @@ func (m *Map[K, V]) resize(newCap int) {
 // Set assigns a value to a key.
 // Returns the previous value, or false when no value was assigned.
 func (m *Map[K, V]) Set(key K, value V) (V, bool) {
+	m.loadCow()
 	if len(m.buckets) == 0 {
 		*m = *New[K, V](0)
 	}
@@ -172,9 +178,20 @@ func (m *Map[K, V]) Len() int {
 	return m.length
 }
 
+func (m *Map[K, V]) loadCow() {
+	if m.cow[1] != m.cow[0] {
+		// copy-on-write
+		buckets := make([]entry[K, V], len(m.buckets))
+		copy(buckets, m.buckets)
+		m.buckets = buckets
+		m.cow[1] = m.cow[0]
+	}
+}
+
 // Delete deletes a value for a key.
 // Returns the deleted value, or false when no value was assigned.
 func (m *Map[K, V]) Delete(key K) (prev V, deleted bool) {
+	m.loadCow()
 	if len(m.buckets) == 0 {
 		return prev, false
 	}
@@ -243,4 +260,13 @@ func (m *Map[K, V]) Values() []V {
 		}
 	}
 	return values
+}
+
+// Copy the smapet. This is a copy-on-write operation and is very fast because
+// it only performs a shadow copy.
+func (m *Map[K, V]) Copy() *Map[K, V] {
+	m2 := new(Map[K, V])
+	*m2 = *m
+	m2.cow[0] = new(cow)
+	return m2
 }
