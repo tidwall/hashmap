@@ -16,14 +16,14 @@ This is a rewrite of the [tidwall/rhh](https://github.com/tidwall/rhh) package t
 
 For ordered key-value data, check out the [tidwall/btree](https://github.com/tidwall/btree) package.
 
-# Getting Started
+## Getting Started
 
-## Installing
+### Installing
 
 To start using `hashmap`, install Go and run `go get`:
 
 ```sh
-$ go get github.com/tidwall/hashmap
+go get github.com/tidwall/hashmap
 ```
 
 This will retrieve the library.
@@ -78,4 +78,4 @@ Josh Baker [@tidwall](http://twitter.com/tidwall)
 
 ## License
 
-Source code is available under the MIT [License](/LICENSE).
+Source code is available under the MIT [License](LICENSE).
