@@ -24,20 +24,20 @@ MAPBENCH=100000 go test
 ## STRING KEYS
 
 -- tidwall --
-set          100,000 ops     15ms      6,755,229/sec 
-get          100,000 ops      9ms     11,480,505/sec 
-reset        100,000 ops      6ms     15,393,057/sec 
-scan              20 ops     12ms          1,643/sec 
-delete       100,000 ops      8ms     12,024,028/sec 
+set          100,000 ops     15ms      6,535,956/sec 
+get          100,000 ops      7ms     15,009,648/sec 
+reset        100,000 ops      5ms     20,811,745/sec 
+scan              20 ops      8ms          2,539/sec 
+delete       100,000 ops      7ms     14,557,933/sec 
 memory     4,194,288 bytes                  41/entry 
 
 -- stdlib --
-set          100,000 ops     22ms      4,618,215/sec 
-get          100,000 ops      9ms     10,560,800/sec 
-reset        100,000 ops      6ms     15,763,082/sec 
-scan              20 ops     16ms          1,275/sec 
-delete       100,000 ops      9ms     11,645,027/sec 
-memory     3,960,672 bytes                  39/entry 
+set          100,000 ops     17ms      5,892,223/sec 
+get          100,000 ops      8ms     12,148,359/sec 
+reset        100,000 ops      4ms     24,779,419/sec 
+scan              20 ops     14ms          1,395/sec 
+delete       100,000 ops      8ms     11,915,708/sec 
+memory     3,966,288 bytes                  39/entry
 ```
 
 ## 100,000 random int keys
@@ -46,20 +46,20 @@ memory     3,960,672 bytes                  39/entry
 ## INT KEYS
 
 -- tidwall --
-set          100,000 ops     13ms      7,655,039/sec 
-get          100,000 ops      8ms     12,273,792/sec 
-reset        100,000 ops      8ms     12,403,374/sec 
-scan              20 ops     18ms          1,090/sec 
-delete       100,000 ops     10ms     10,240,310/sec 
-memory     3,143,448 bytes                  31/entry 
+set          100,000 ops      8ms     12,573,069/sec 
+get          100,000 ops      4ms     24,821,181/sec 
+reset        100,000 ops      4ms     25,324,412/sec 
+scan              20 ops      8ms          2,430/sec 
+delete       100,000 ops      5ms     22,156,034/sec 
+memory     3,143,352 bytes                  31/entry 
 
 -- stdlib --
-set          100,000 ops     10ms     10,356,513/sec 
-get          100,000 ops      5ms     20,322,233/sec 
-reset        100,000 ops      5ms     21,655,755/sec 
-scan              20 ops     20ms          1,001/sec 
-delete       100,000 ops      4ms     22,516,827/sec 
-memory     2,767,704 bytes                  27/entry 
+set          100,000 ops      7ms     13,547,121/sec 
+get          100,000 ops      4ms     26,458,302/sec 
+reset        100,000 ops      4ms     28,379,163/sec 
+scan              20 ops     16ms          1,214/sec 
+delete       100,000 ops      4ms     24,771,495/sec 
+memory     2,784,264 bytes                  27/entry 
 ```
 
 ## 1,000,000 random string keys
@@ -68,19 +68,19 @@ memory     2,767,704 bytes                  27/entry
 ## STRING KEYS
 
 -- tidwall --
-set        1,000,000 ops    236ms      4,234,342/sec 
-get        1,000,000 ops    132ms      7,563,164/sec 
-reset      1,000,000 ops    125ms      8,025,718/sec 
-scan              20 ops    135ms            148/sec 
-delete     1,000,000 ops    141ms      7,091,525/sec 
+set        1,000,000 ops    217ms      4,607,387/sec 
+get        1,000,000 ops    127ms      7,872,817/sec 
+reset      1,000,000 ops    130ms      7,709,027/sec 
+scan              20 ops    136ms            147/sec 
+delete     1,000,000 ops    149ms      6,716,045/sec 
 memory    67,108,848 bytes                  67/entry 
 
 -- stdlib --
-set        1,000,000 ops    351ms      2,851,085/sec 
-get        1,000,000 ops    119ms      8,381,478/sec 
-reset      1,000,000 ops    123ms      8,114,941/sec 
-scan              20 ops    154ms            130/sec 
-delete     1,000,000 ops    137ms      7,322,445/sec 
+set        1,000,000 ops    325ms      3,078,132/sec 
+get        1,000,000 ops    122ms      8,217,771/sec 
+reset      1,000,000 ops    133ms      7,510,273/sec 
+scan              20 ops    163ms            122/sec 
+delete     1,000,000 ops    148ms      6,761,332/sec 
 memory    57,931,472 bytes                  57/entry
 ```
 
@@ -90,20 +90,20 @@ memory    57,931,472 bytes                  57/entry
 ## INT KEYS
 
 -- tidwall --
-set        1,000,000 ops    105ms      9,490,462/sec 
-get        1,000,000 ops     67ms     14,865,120/sec 
-reset      1,000,000 ops     61ms     16,336,651/sec 
-scan              20 ops    138ms            144/sec 
-delete     1,000,000 ops     66ms     15,078,569/sec 
+set        1,000,000 ops    101ms      9,901,395/sec 
+get        1,000,000 ops     63ms     15,928,770/sec 
+reset      1,000,000 ops     66ms     15,107,262/sec 
+scan              20 ops    139ms            144/sec 
+delete     1,000,000 ops     66ms     15,216,322/sec 
 memory    50,329,272 bytes                  50/entry 
 
 -- stdlib --
-set        1,000,000 ops    155ms      6,469,942/sec 
-get        1,000,000 ops     69ms     14,390,932/sec 
-reset      1,000,000 ops     53ms     18,828,756/sec 
+set        1,000,000 ops    119ms      8,431,961/sec 
+get        1,000,000 ops     61ms     16,376,595/sec 
+reset      1,000,000 ops     59ms     17,032,395/sec 
 scan              20 ops    153ms            130/sec 
-delete     1,000,000 ops     58ms     17,238,929/sec 
-memory    40,146,664 bytes                  40/entry 
+delete     1,000,000 ops     67ms     15,026,654/sec 
+memory    40,146,760 bytes                  40/entry 
 ```
 
 ## 10,000,000 random string keys (int values)
@@ -112,19 +112,19 @@ memory    40,146,664 bytes                  40/entry
 ## STRING KEYS
 
 -- tidwall --
-set       10,000,000 ops   2438ms      4,102,284/sec 
-get       10,000,000 ops   1383ms      7,232,811/sec 
-reset     10,000,000 ops   1443ms      6,928,121/sec 
+set       10,000,000 ops   2584ms      3,869,389/sec 
+get       10,000,000 ops   1418ms      7,051,328/sec 
+reset     10,000,000 ops   1469ms      6,807,487/sec 
 scan              20 ops   1049ms             19/sec 
-delete    10,000,000 ops   1691ms      5,915,335/sec 
+delete    10,000,000 ops   1694ms      5,901,787/sec 
 memory   536,870,896 bytes                  53/entry 
 
 -- stdlib --
-set       10,000,000 ops   3572ms      2,799,176/sec 
-get       10,000,000 ops   1447ms      6,911,076/sec 
-reset     10,000,000 ops   1436ms      6,965,708/sec 
-scan              20 ops   1772ms             11/sec 
-delete    10,000,000 ops   1560ms      6,412,190/sec 
+set       10,000,000 ops   3771ms      2,651,828/sec 
+get       10,000,000 ops   1494ms      6,695,021/sec 
+reset     10,000,000 ops   1480ms      6,758,881/sec 
+scan              20 ops   1855ms             10/sec 
+delete    10,000,000 ops   1629ms      6,138,209/sec 
 memory   463,468,240 bytes                  46/entry
 ```
 
@@ -134,18 +134,18 @@ memory   463,468,240 bytes                  46/entry
 ## INT KEYS
 
 -- tidwall --
-set       10,000,000 ops   1383ms      7,229,909/sec 
-get       10,000,000 ops    754ms     13,260,571/sec 
-reset     10,000,000 ops    778ms     12,860,468/sec 
-scan              20 ops   1083ms             18/sec 
-delete    10,000,000 ops    910ms     10,988,243/sec 
+set       10,000,000 ops   1428ms      7,002,173/sec 
+get       10,000,000 ops    733ms     13,636,196/sec 
+reset     10,000,000 ops    787ms     12,710,144/sec 
+scan              20 ops   1098ms             18/sec 
+delete    10,000,000 ops    900ms     11,108,541/sec 
 memory   402,650,808 bytes                  40/entry 
 
 -- stdlib --
-set       10,000,000 ops   1635ms      6,116,286/sec 
-get       10,000,000 ops    760ms     13,154,962/sec 
-reset     10,000,000 ops    852ms     11,740,869/sec 
-scan              20 ops   1592ms             12/sec 
-delete    10,000,000 ops    889ms     11,253,382/sec 
-memory   321,976,040 bytes                  32/entry 
+set       10,000,000 ops   1709ms      5,850,969/sec 
+get       10,000,000 ops    797ms     12,551,221/sec 
+reset     10,000,000 ops    874ms     11,437,820/sec 
+scan              20 ops   1629ms             12/sec 
+delete    10,000,000 ops    910ms     10,994,436/sec 
+memory   321,976,032 bytes                  32/entry 
 ```
