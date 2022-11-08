@@ -9,8 +9,7 @@ An [efficient](BENCH.md) hashmap implementation in Go.
 - Support for [Generics](#generics).
 - `Map` and `Set` types for unordered key-value maps and sets,
 - [xxh3 algorithm](https://github.com/zeebo/xxh3)
-- [Open addressing](https://en.wikipedia.org/wiki/Hash_table#Open_addressing)
-- [Robin hood hashing](https://en.wikipedia.org/wiki/Hash_table#Robin_Hood_hashing)
+- [Open addressing](https://en.wikipedia.org/wiki/Hash_table#Open_addressing) with [Robin hood hashing](https://en.wikipedia.org/wiki/Hash_table#Robin_Hood_hashing)
 - Automatically shinks memory on deletes (no memory leaks).
 - Pretty darn good performance. 🚀 ([benchmarks](BENCH.md)).
 
