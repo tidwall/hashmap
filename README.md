@@ -31,7 +31,7 @@ This will retrieve the library.
 ## Usage
 
 The `Map` type works similar to a standard Go map, and includes the methods:
-`Set`, `Get`, `Delete`, `Len`, `Scan`, `Keys` and `Values`.
+`Set`, `Get`, `Delete`, `Len`, `Scan`, `Keys`, `Values`, and `Copy`.
 
 ```go
 var m hashmap.Map[string, string]
