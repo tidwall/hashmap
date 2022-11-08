@@ -12,6 +12,7 @@ An [efficient](BENCH.md) hashmap implementation in Go.
 - [Open addressing](https://en.wikipedia.org/wiki/Hash_table#Open_addressing)
 - [Robin hood hashing](https://en.wikipedia.org/wiki/Hash_table#Robin_Hood_hashing)
 - Automatically shinks memory on deletes (no memory leaks).
+- Pretty darn good performance. 🚀 ([benchmarks](BENCH.md)).
 
 For ordered key-value data, check out the [tidwall/btree](https://github.com/tidwall/btree) package.
 
