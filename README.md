@@ -4,15 +4,14 @@
 
 An [efficient](BENCH.md) hashmap implementation in Go.
 
-This is a rewrite of the [tidwall/rhh](https://github.com/tidwall/rhh) package to include Go 1.18 features.
-
 ## Features
 
 - Support for [Generics](#generics) (Go 1.18+).
 - `Map` and `Set` types for unordered key-value maps and sets,
-- [xxhash algorithm](http://www.xxhash.com)
+- [xxh3 algorithm](https://github.com/zeebo/xxh3)
 - [Open addressing](https://en.wikipedia.org/wiki/Hash_table#Open_addressing)
 - [Robin hood hashing](https://en.wikipedia.org/wiki/Hash_table#Robin_Hood_hashing)
+- Automatically shinks memory on deletes (no memory leaks).
 
 For ordered key-value data, check out the [tidwall/btree](https://github.com/tidwall/btree) package.
 
