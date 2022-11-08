@@ -7,7 +7,7 @@ package hashmap
 import (
 	"unsafe"
 
-	"github.com/cespare/xxhash/v2"
+	"github.com/zeebo/xxh3"
 )
 
 const (
@@ -59,8 +59,8 @@ func (m *Map[K, V]) hash(key K) int {
 			len  int
 		}{unsafe.Pointer(&key), m.ksize}))
 	}
-	// Now for the actually hashing.
-	return int(xxhash.Sum64String(strKey) >> dibBitSize)
+	// Now for the actual hashing.
+	return int(xxh3.HashString(strKey) >> dibBitSize)
 }
 
 // Map is a hashmap. Like map[string]interface{}

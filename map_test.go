@@ -32,7 +32,7 @@ func add(x keyT, delta int) int {
 	return int(i + int64(delta))
 }
 
-///////////////////////////
+// /////////////////////////
 func random(N int, perm bool) []keyT {
 	nums := make([]keyT, N)
 	if perm {

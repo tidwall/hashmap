@@ -1,11 +1,11 @@
-## Performance
+# Performance
 
-While this implementation was designed with performance in mind, it's not 
-necessarily better, faster, smarter, or sexier than the built-in Go hashmap. 
+While this implementation was designed with performance in mind, it's not
+necessarily better, faster, smarter, or sexier than the built-in Go hashmap.
 
 Here's a very rough comparison.
 
-The following benchmarks were run on my 2019 Macbook Pro (2.4 GHz 8-Core Intel Core i9) using Go version 1.18. The key types are either strings or ints and the values are always ints.
+The following benchmarks were run on a Linux Desktop (3.8 GHz 8-Core AMD Ryzen 7 5800X) using Go version 1.19. The key types are either strings or ints and the values are always ints.
 
 In all cases the maps start from zero capacity, like:
 
@@ -14,139 +14,138 @@ m := make(map[string]int)      // go stdlib
 var m hashmap.Map[string, int] // this package
 ```
 
-```
+```shell
 MAPBENCH=100000 go test
 ```
 
-### 100,000 random string keys
+## 100,000 random string keys
 
-```
+```shell
 ## STRING KEYS
 
 -- tidwall --
-set          100,000 ops     19ms      5,405,235/sec
-get          100,000 ops     12ms      8,599,131/sec
-reset        100,000 ops     12ms      8,463,694/sec
-scan              20 ops     14ms          1,428/sec
-delete       100,000 ops     11ms      8,749,727/sec
-memory     4,194,288 bytes                  41/entry
+set          100,000 ops     15ms      6,535,956/sec 
+get          100,000 ops      7ms     15,009,648/sec 
+reset        100,000 ops      5ms     20,811,745/sec 
+scan              20 ops      8ms          2,539/sec 
+delete       100,000 ops      7ms     14,557,933/sec 
+memory     4,194,288 bytes                  41/entry 
 
 -- stdlib --
-set          100,000 ops     28ms      3,602,606/sec
-get          100,000 ops     17ms      5,842,126/sec
-reset        100,000 ops     13ms      7,489,159/sec
-scan              20 ops     32ms            627/sec
-delete       100,000 ops     13ms      7,545,664/sec
-memory     3,968,784 bytes                  39/entry
+set          100,000 ops     17ms      5,892,223/sec 
+get          100,000 ops      8ms     12,148,359/sec 
+reset        100,000 ops      4ms     24,779,419/sec 
+scan              20 ops     14ms          1,395/sec 
+delete       100,000 ops      8ms     11,915,708/sec 
+memory     3,966,288 bytes                  39/entry
 ```
 
-### 100,000 random int keys
+## 100,000 random int keys
 
-```
+```shell
 ## INT KEYS
 
 -- tidwall --
-set          100,000 ops     10ms      9,624,083/sec
-get          100,000 ops      5ms     21,056,856/sec
-reset        100,000 ops      5ms     21,281,182/sec
-scan              20 ops     10ms          1,917/sec
-delete       100,000 ops      5ms     18,342,582/sec
-memory     3,143,352 bytes                  31/entry
+set          100,000 ops      8ms     12,573,069/sec 
+get          100,000 ops      4ms     24,821,181/sec 
+reset        100,000 ops      4ms     25,324,412/sec 
+scan              20 ops      8ms          2,430/sec 
+delete       100,000 ops      5ms     22,156,034/sec 
+memory     3,143,352 bytes                  31/entry 
 
 -- stdlib --
-set          100,000 ops     10ms     10,354,476/sec
-get          100,000 ops      4ms     25,693,552/sec
-reset        100,000 ops      4ms     24,752,983/sec
-scan              20 ops     21ms            967/sec
-delete       100,000 ops      5ms     19,239,275/sec
-memory     2,772,744 bytes                  27/entry
+set          100,000 ops      7ms     13,547,121/sec 
+get          100,000 ops      4ms     26,458,302/sec 
+reset        100,000 ops      4ms     28,379,163/sec 
+scan              20 ops     16ms          1,214/sec 
+delete       100,000 ops      4ms     24,771,495/sec 
+memory     2,784,264 bytes                  27/entry 
 ```
 
-### 1,000,000 random string keys
+## 1,000,000 random string keys
 
-```
+```shell
 ## STRING KEYS
 
 -- tidwall --
-set        1,000,000 ops    299ms      3,342,247/sec
-get        1,000,000 ops    141ms      7,099,822/sec
-reset      1,000,000 ops    155ms      6,444,007/sec
-scan              20 ops    244ms             82/sec
-delete     1,000,000 ops    178ms      5,622,242/sec
-memory    67,108,848 bytes                  67/entry
+set        1,000,000 ops    217ms      4,607,387/sec 
+get        1,000,000 ops    127ms      7,872,817/sec 
+reset      1,000,000 ops    130ms      7,709,027/sec 
+scan              20 ops    136ms            147/sec 
+delete     1,000,000 ops    149ms      6,716,045/sec 
+memory    67,108,848 bytes                  67/entry 
 
 -- stdlib --
-set        1,000,000 ops    426ms      2,348,509/sec
-get        1,000,000 ops    142ms      7,019,978/sec
-reset      1,000,000 ops    182ms      5,496,549/sec
-scan              20 ops    297ms             67/sec
-delete     1,000,000 ops    187ms      5,337,449/sec
+set        1,000,000 ops    325ms      3,078,132/sec 
+get        1,000,000 ops    122ms      8,217,771/sec 
+reset      1,000,000 ops    133ms      7,510,273/sec 
+scan              20 ops    163ms            122/sec 
+delete     1,000,000 ops    148ms      6,761,332/sec 
 memory    57,931,472 bytes                  57/entry
 ```
 
-### 1,000,000 random int keys
+## 1,000,000 random int keys
 
-```
+```shell
 ## INT KEYS
 
 -- tidwall --
-set        1,000,000 ops    146ms      6,838,679/sec
-get        1,000,000 ops     72ms     13,798,363/sec
-reset      1,000,000 ops     76ms     13,236,277/sec
-scan              20 ops    243ms             82/sec
-delete     1,000,000 ops    112ms      8,893,494/sec
-memory    50,329,280 bytes                  50/entry
+set        1,000,000 ops    101ms      9,901,395/sec 
+get        1,000,000 ops     63ms     15,928,770/sec 
+reset      1,000,000 ops     66ms     15,107,262/sec 
+scan              20 ops    139ms            144/sec 
+delete     1,000,000 ops     66ms     15,216,322/sec 
+memory    50,329,272 bytes                  50/entry 
 
 -- stdlib --
-set        1,000,000 ops    171ms      5,850,975/sec
-get        1,000,000 ops     71ms     14,096,964/sec
-reset      1,000,000 ops     75ms     13,279,320/sec
-scan              20 ops    285ms             70/sec
-delete     1,000,000 ops     90ms     11,131,406/sec
-memory    40,146,760 bytes                  40/entry
+set        1,000,000 ops    119ms      8,431,961/sec 
+get        1,000,000 ops     61ms     16,376,595/sec 
+reset      1,000,000 ops     59ms     17,032,395/sec 
+scan              20 ops    153ms            130/sec 
+delete     1,000,000 ops     67ms     15,026,654/sec 
+memory    40,146,760 bytes                  40/entry 
 ```
 
-### 10,000,000 random string keys (int values)
+## 10,000,000 random string keys (int values)
 
-```
+```shell
 ## STRING KEYS
 
 -- tidwall --
-set       10,000,000 ops   3185ms      3,139,265/sec
-get       10,000,000 ops   1624ms      6,158,609/sec
-reset     10,000,000 ops   1816ms      5,505,645/sec
-scan              20 ops   2037ms              9/sec
-delete    10,000,000 ops   2137ms      4,678,937/sec
-memory   536,870,904 bytes                  53/entry
+set       10,000,000 ops   2584ms      3,869,389/sec 
+get       10,000,000 ops   1418ms      7,051,328/sec 
+reset     10,000,000 ops   1469ms      6,807,487/sec 
+scan              20 ops   1049ms             19/sec 
+delete    10,000,000 ops   1694ms      5,901,787/sec 
+memory   536,870,896 bytes                  53/entry 
 
 -- stdlib --
-set       10,000,000 ops   4623ms      2,163,071/sec
-get       10,000,000 ops   1764ms      5,670,292/sec
-reset     10,000,000 ops   2389ms      4,185,314/sec
-scan              20 ops   2975ms              6/sec
-delete    10,000,000 ops   2280ms      4,385,089/sec
-memory   463,468,352 bytes                  46/entry
-
+set       10,000,000 ops   3771ms      2,651,828/sec 
+get       10,000,000 ops   1494ms      6,695,021/sec 
+reset     10,000,000 ops   1480ms      6,758,881/sec 
+scan              20 ops   1855ms             10/sec 
+delete    10,000,000 ops   1629ms      6,138,209/sec 
+memory   463,468,240 bytes                  46/entry
 ```
 
-### 10,000,000 random int keys (int values)
+## 10,000,000 random int keys (int values)
 
-```
+```shell
 ## INT KEYS
 
 -- tidwall --
-set       10,000,000 ops   1743ms      5,736,861/sec
-get       10,000,000 ops    878ms     11,394,400/sec
-reset     10,000,000 ops   1003ms      9,965,713/sec
-scan              20 ops   1973ms             10/sec
-delete    10,000,000 ops   1126ms      8,883,210/sec
-memory   402,650,808 bytes                  40/entry
+set       10,000,000 ops   1428ms      7,002,173/sec 
+get       10,000,000 ops    733ms     13,636,196/sec 
+reset     10,000,000 ops    787ms     12,710,144/sec 
+scan              20 ops   1098ms             18/sec 
+delete    10,000,000 ops    900ms     11,108,541/sec 
+memory   402,650,808 bytes                  40/entry 
 
 -- stdlib --
-set       10,000,000 ops   1989ms      5,027,700/sec
-get       10,000,000 ops   1021ms      9,796,267/sec
-reset     10,000,000 ops   1033ms      9,685,070/sec
-scan              20 ops   2847ms              7/sec
-delete    10,000,000 ops   1182ms      8,456,779/sec
-memory   321,976,040 bytes                  32/entry
+set       10,000,000 ops   1709ms      5,850,969/sec 
+get       10,000,000 ops    797ms     12,551,221/sec 
+reset     10,000,000 ops    874ms     11,437,820/sec 
+scan              20 ops   1629ms             12/sec 
+delete    10,000,000 ops    910ms     10,994,436/sec 
+memory   321,976,032 bytes                  32/entry 
 ```
