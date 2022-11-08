@@ -6,7 +6,7 @@ An [efficient](BENCH.md) hashmap implementation in Go.
 
 ## Features
 
-- Support for [Generics](#generics) (Go 1.18+).
+- Support for [Generics](#generics).
 - `Map` and `Set` types for unordered key-value maps and sets,
 - [xxh3 algorithm](https://github.com/zeebo/xxh3)
 - [Open addressing](https://en.wikipedia.org/wiki/Hash_table#Open_addressing)
