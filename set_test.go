@@ -144,3 +144,24 @@ func TestSetCopy(t *testing.T) {
 		panic("!")
 	}
 }
+
+func TestSetGetPos(t *testing.T) {
+	var m Set[int]
+	if _, ok := m.GetPos(100); ok {
+		t.Fatal()
+	}
+	for i := 0; i < 1000; i++ {
+		m.Insert(i)
+	}
+	m2 := make(map[int]int)
+	for i := 0; i < 10000; i++ {
+		key, ok := m.GetPos(uint64(i))
+		if !ok {
+			t.Fatal()
+		}
+		m2[key] = key
+	}
+	if len(m2) != m.Len() {
+		t.Fatal()
+	}
+}

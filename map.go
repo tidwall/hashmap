@@ -253,3 +253,17 @@ func (m *Map[K, V]) Copy() *Map[K, V] {
 	copy(m2.buckets, m.buckets)
 	return m2
 }
+
+// GetPos gets a single keys/value nearby a position.
+// The pos param can be any valid uint64. Useful for grabbing a random item
+// from the map.
+func (m *Map[K, V]) GetPos(pos uint64) (key K, value V, ok bool) {
+	for i := 0; i < len(m.buckets); i++ {
+		index := (pos + uint64(i)) & uint64(m.mask)
+		if m.buckets[index].dib() > 0 {
+			return m.buckets[index].key, m.buckets[index].value, true
+		}
+	}
+	// Empty map
+	return key, value, false
+}

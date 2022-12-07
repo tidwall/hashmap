@@ -544,3 +544,24 @@ func TestEmpty(t *testing.T) {
 		t.Fatal()
 	}
 }
+
+func TestGetPos(t *testing.T) {
+	var m Map[int, int]
+	if _, _, ok := m.GetPos(100); ok {
+		t.Fatal()
+	}
+	for i := 0; i < 1000; i++ {
+		m.Set(i, i+1)
+	}
+	m2 := make(map[int]int)
+	for i := 0; i < 10000; i++ {
+		key, val, ok := m.GetPos(uint64(i))
+		if !ok {
+			t.Fatal()
+		}
+		m2[key] = val
+	}
+	if len(m2) != m.Len() {
+		t.Fatal()
+	}
+}

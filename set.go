@@ -43,3 +43,11 @@ func (tr *Set[K]) Copy() *Set[K] {
 	tr2.base = *tr.base.Copy()
 	return tr2
 }
+
+// GetPos gets a single keys/value nearby a position.
+// The pos param can be any valid uint64. Useful for grabbing a random item
+// from the Set.
+func (s *Set[K]) GetPos(pos uint64) (key K, ok bool) {
+	key, _, ok = s.base.GetPos(pos)
+	return key, ok
+}
