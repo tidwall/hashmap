@@ -565,3 +565,42 @@ func TestGetPos(t *testing.T) {
 		t.Fatal()
 	}
 }
+
+func TestIssue3(t *testing.T) {
+	m := New[string, int](50)
+	m.Set("key:808943", 1)
+	m.Set("key:5834", 2)
+	m.Set("key:51630", 3)
+	m.Set("key:49504", 4)
+	m.Set("key:346528", 5)
+	m.Set("key:189743", 6)
+	m.Set("key:4112608", 7)
+	m.Set("key:21749", 8)
+	m.Set("key:844131", 9)
+	if v, _ := m.Delete("key:844131"); v != 9 {
+		t.Fatal()
+	}
+	if _, ok := m.Get("key:844131"); ok {
+		t.Fatal()
+	}
+
+	for j := 0; j < 1000; j++ {
+		m = New[string, int](50)
+		keys := make([]string, j)
+		for i := 0; i < len(keys); i++ {
+			keys[i] = fmt.Sprintf("key:%d", i)
+			m.Set(keys[i], i)
+		}
+		for i := 0; i < len(keys); i++ {
+			if v, _ := m.Get(keys[i]); v != i {
+				t.Fatal()
+			}
+			if v, _ := m.Delete(keys[i]); v != i {
+				t.Fatal()
+			}
+			if _, ok := m.Get(keys[i]); ok {
+				t.Fatal()
+			}
+		}
+	}
+}

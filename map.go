@@ -83,6 +83,9 @@ func New[K comparable, V any](cap int) *Map[K, V] {
 	for sz < m.cap {
 		sz *= 2
 	}
+	if m.cap > 0 {
+		m.cap = sz
+	}
 	m.buckets = make([]entry[K, V], sz)
 	m.mask = len(m.buckets) - 1
 	m.growAt = int(float64(len(m.buckets)) * loadFactor)
