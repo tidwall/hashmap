@@ -11,10 +11,9 @@ import (
 )
 
 const (
-	loadFactor  = 0.85                      // must be above 50%
+	loadFactor  = 0.65                      // must be above 50%
 	dibBitSize  = 16                        // 0xFFFF
 	hashBitSize = 64 - dibBitSize           // 0xFFFFFFFFFFFF
-	maxHash     = ^uint64(0) >> dibBitSize  // max 28,147,497,671,0655
 	maxDIB      = ^uint64(0) >> hashBitSize // max 65,535
 )
 
@@ -40,27 +39,41 @@ func makeHDIB(hash, dib int) uint64 {
 	return uint64(hash)<<dibBitSize | uint64(dib)&maxDIB
 }
 
-// hash returns a 48-bit hash for 64-bit environments, or 32-bit hash for
-// 32-bit environments.
-func (m *Map[K, V]) hash(key K) int {
-	// The unsafe package is used here to cast the key into a string container
-	// so that the hasher can work. The hasher normally only accept a string or
-	// []byte, but this effectively allows it to accept value type.
-	// The m.kstr bool, which is set from the New function, indicates that the
-	// key is known to already be a true string. Otherwise, a fake string is
-	// derived by setting the string data to value of the key, and the string
-	// length to the size of the value.
-	var strKey string
-	if m.kstr {
-		strKey = *(*string)(unsafe.Pointer(&key))
-	} else {
-		strKey = *(*string)(unsafe.Pointer(&struct {
-			data unsafe.Pointer
-			len  int
-		}{unsafe.Pointer(&key), m.ksize}))
-	}
-	// Now for the actual hashing.
-	return int(xxh3.HashString(strKey) >> dibBitSize)
+// https://zimbry.blogspot.com/2011/09/better-bit-mixing-improving-on.html
+// hash u64 using mix13
+func mix13(key uint64) uint64 {
+	key ^= key >> 30
+	key *= 0xbf58476d1ce4e5b9
+	key ^= key >> 27
+	key *= 0x94d049bb133111eb
+	key ^= key >> 31
+	return key
+}
+
+type integer interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 | ~uint | ~uint8 | ~uint16 |
+		~uint32 | ~uint64 | ~uintptr
+}
+
+func hashN[T integer](p unsafe.Pointer) int {
+	return int(mix13(uint64(*(*T)(p))) >> dibBitSize)
+}
+
+func hashI[K comparable](k K) int   { return hashN[int](unsafe.Pointer(&k)) }
+func hashI8[K comparable](k K) int  { return hashN[int8](unsafe.Pointer(&k)) }
+func hashI16[K comparable](k K) int { return hashN[int16](unsafe.Pointer(&k)) }
+func hashI32[K comparable](k K) int { return hashN[int32](unsafe.Pointer(&k)) }
+func hashI64[K comparable](k K) int { return hashN[int64](unsafe.Pointer(&k)) }
+func hashU[K comparable](k K) int   { return hashN[uint](unsafe.Pointer(&k)) }
+func hashU8[K comparable](k K) int  { return hashN[uint8](unsafe.Pointer(&k)) }
+func hashU16[K comparable](k K) int { return hashN[uint16](unsafe.Pointer(&k)) }
+func hashU32[K comparable](k K) int { return hashN[uint32](unsafe.Pointer(&k)) }
+func hashU64[K comparable](k K) int { return hashN[uint64](unsafe.Pointer(&k)) }
+func hashS[K comparable](k K) int {
+	return int(xxh3.HashString(*(*string)(unsafe.Pointer(&k))) >> dibBitSize)
+}
+func hashV[K comparable](k K) int {
+	return hashS(unsafe.String((*byte)(unsafe.Pointer(&k)), unsafe.Sizeof(k)))
 }
 
 // Map is a hashmap. Like map[string]interface{}
@@ -71,8 +84,7 @@ type Map[K comparable, V any] struct {
 	growAt   int
 	shrinkAt int
 	buckets  []entry[K, V]
-	ksize    int
-	kstr     bool
+	hash     func(K) int
 }
 
 // New returns a new Map. Like map[string]interface{}
@@ -90,19 +102,35 @@ func New[K comparable, V any](cap int) *Map[K, V] {
 	m.mask = len(m.buckets) - 1
 	m.growAt = int(float64(len(m.buckets)) * loadFactor)
 	m.shrinkAt = int(float64(len(m.buckets)) * (1 - loadFactor))
-	m.detectHasher()
-	return m
-}
 
-func (m *Map[K, V]) detectHasher() {
-	// Detect the key type. This is needed by the hasher.
-	var k K
-	switch ((interface{})(k)).(type) {
+	var key K
+	switch any(key).(type) {
+	case int:
+		m.hash = hashI
+	case int8:
+		m.hash = hashI8
+	case int16:
+		m.hash = hashI16
+	case int32:
+		m.hash = hashI32
+	case int64:
+		m.hash = hashI64
+	case uint:
+		m.hash = hashU
+	case uint8:
+		m.hash = hashU8
+	case uint16:
+		m.hash = hashU16
+	case uint32:
+		m.hash = hashU32
+	case uint64:
+		m.hash = hashU64
 	case string:
-		m.kstr = true
+		m.hash = hashS
 	default:
-		m.ksize = int(unsafe.Sizeof(k))
+		m.hash = hashV
 	}
+	return m
 }
 
 func (m *Map[K, V]) resize(newCap int) {
@@ -133,18 +161,19 @@ func (m *Map[K, V]) set(hash int, key K, value V) (prev V, ok bool) {
 	e := entry[K, V]{makeHDIB(hash, 1), value, key}
 	i := e.hash() & m.mask
 	for {
-		if m.buckets[i].dib() == 0 {
-			m.buckets[i] = e
+		b := &m.buckets[i]
+		if b.dib() == 0 {
+			*b = e
 			m.length++
 			return prev, false
 		}
-		if e.hash() == m.buckets[i].hash() && e.key == m.buckets[i].key {
-			prev = m.buckets[i].value
-			m.buckets[i].value = e.value
+		if e.hash() == b.hash() && e.key == b.key {
+			prev = b.value
+			b.value = e.value
 			return prev, true
 		}
-		if m.buckets[i].dib() < e.dib() {
-			e, m.buckets[i] = m.buckets[i], e
+		if b.dib() < e.dib() {
+			e, *b = *b, e
 		}
 		i = (i + 1) & m.mask
 		e.setDIB(e.dib() + 1)
@@ -189,28 +218,24 @@ func (m *Map[K, V]) Delete(key K) (prev V, deleted bool) {
 		}
 		if m.buckets[i].hash() == hash && m.buckets[i].key == key {
 			prev = m.buckets[i].value
-			m.remove(i)
+			m.buckets[i].hdib = 0
+			for {
+				pi := i
+				i = (i + 1) & m.mask
+				if m.buckets[i].dib() <= 1 {
+					m.buckets[pi] = entry[K, V]{}
+					break
+				}
+				m.buckets[pi] = m.buckets[i]
+				m.buckets[pi].setDIB(m.buckets[pi].dib() - 1)
+			}
+			m.length--
+			if len(m.buckets) > m.cap && m.length <= m.shrinkAt {
+				m.resize(m.length)
+			}
 			return prev, true
 		}
 		i = (i + 1) & m.mask
-	}
-}
-
-func (m *Map[K, V]) remove(i int) {
-	m.buckets[i].setDIB(0)
-	for {
-		pi := i
-		i = (i + 1) & m.mask
-		if m.buckets[i].dib() <= 1 {
-			m.buckets[pi] = entry[K, V]{}
-			break
-		}
-		m.buckets[pi] = m.buckets[i]
-		m.buckets[pi].setDIB(m.buckets[pi].dib() - 1)
-	}
-	m.length--
-	if len(m.buckets) > m.cap && m.length <= m.shrinkAt {
-		m.resize(m.length)
 	}
 }
 
