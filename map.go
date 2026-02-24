@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	loadFactor  = 0.65                      // must be above 50%
+	loadFactor  = 0.60                      // must be above 50%
 	dibBitSize  = 16                        // 0xFFFF
 	hashBitSize = 64 - dibBitSize           // 0xFFFFFFFFFFFF
 	maxDIB      = ^uint64(0) >> hashBitSize // max 65,535
